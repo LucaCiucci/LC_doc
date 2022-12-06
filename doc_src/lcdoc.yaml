@@ -6,10 +6,10 @@
 # documentation generator, see README.md
 # Execute `lcdoc` to generate the documentation.
 
-projectName: test
-projectVersion: "7.2.3"
-inputDir: ./doc_src
-outDir: ./doc
+projectName: LC_doc
+projectVersion: "0.0.0"
+inputDir: ./website
+outDir: ../doc
 additionalMaterial:
   - opn/css: C:\Users\lucac\Documents\develop\node\openphysicsnotes-content\css
   - opn/js: C:\Users\lucac\Documents\develop\node\openphysicsnotes-content\js
@@ -31,5 +31,4 @@ inputFiles:
         - "-DSOME_FLAG=42"
 templates:
   models:
-    article: doc_templates/pages/article.html
-    plain-article: doc_templates/pages/plain-article.html
+    article: templates/pages/article.html

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+## if existsIn(meta, "lang")
+<html lang="{{ meta.lang }}">
+## else
+<html>
+## endif
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+## if existsIn(meta, "title")
+    <!-- title -->
+    <title>{{ meta.title }}</title>
+    <meta name="og:title" content="{{ meta.title }}">
+    <meta name="twitter:title" content="{{ meta.title }}">
+## endif
+## if existsIn(meta, "subject")
+    <!-- subject -->
+    <meta name="page-subject" content="{{ meta.subject }}">
+## endif
+## if existsIn(meta, "description")
+    <!-- description -->
+    <meta name="description" content="{{ meta.description }}">
+    <meta name="og:description" content="{{ meta.description }}">
+    <meta name="twitter:description" content="{{ meta.description }}">
+## endif
+## if existsIn(meta, "keywords")
+    <!-- keywords -->
+    <meta name="keywords" content="{{ meta.keywords }}">
+## endif
+## if existsIn(meta, "favicon")
+    <!-- favicon -->
+    {{ favicon_tag(meta.favicon) }}
+## endif
+## if existsIn(meta, "canonical")
+    <!-- canonical -->
+    <link rel="canonical" href="{{ meta.canonical }}">
+## endif
+## if existsIn(meta, "robots")
+    <!-- robots -->
+    <meta name="robots" content="{{ meta.robots }}">
+## endif
+## if existsIn(meta, "author")
+    <!-- author -->
+    <meta name="author" content="{{ meta.author }}">
+## endif
+## if existsIn(meta, "image")
+    <!-- image -->
+    <meta name="og:image" content="{{ meta.image }}">
+    <meta name="twitter:image" content="{{ meta.image }}">
+## endif
+## if existsIn(meta, "other_meta_tags")
+    <!-- other meta tags -->
+## for key, value in meta.other_meta_tags
+    <meta name="{{ key }}" content="{{ value }}">
+## endfor
+## endif
+
+    <!-- styles -->
+    <link href="{{ rootPath }}/opn/css/style.css" rel="stylesheet"/>
+    <link href="{{ rootPath }}/opn/css/tool-tip.css" rel="stylesheet"/>
+    <style>code span { text-decoration: none; color: inherit; }</style>
+
+    <!-- scripts -->
+    <script async="" src="{{ rootPath }}/opn/js/tool-tip.js"></script>
+    <script async="" src="//cdn.jsdelivr.net/npm/tex-math@latest/dist/tex-math.js"></script>
+    <script async="" src="//cdn.jsdelivr.net/npm/lc-ref@latest/dist/lc-ref.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/languages/latex.min.js"></script>
+    <script>//hljs.highlightAll();
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('code:not(.nohighlight)').forEach((block) => {
+            //hljs.highlightElement(block);
+        });
+        // https://github.com/highlightjs/highlight.js/issues/1737
+        document.querySelectorAll('code:not([class*="language-"])').forEach(function($) {
+            $.className = $.className ? $.className + ' no-highlight' : 'no-highlight';
+        });
+        hljs.configure({cssSelector: 'code[class*="language-"]'});
+        hljs.highlightAll();
+    })</script>
+
+</head>
+<body>
+
+<lc-defs>
+
+</lc-defs>
+
+<header>
+    <div>
+        <!--div class="button"><a href="">OPN</a></div-->
+        <!--a href="/"><img class="button logo" src="//google.com/favicon.ico" alt="OPN"></img></a-->
+        <div class="button" style="font-size: 125%;"><a href="{{ rootPath }}">lcdoc</a></div>
+        <div class="links">
+            <div class="button"><a href="{{ rootPath }}/tutorial">Tutorials</a></div>
+            <div class="button"><a href="${href}">ciao</a></div>
+            <div class="button"><a href="${href}">ciao</a></div>
+            <div class="button"><a href="${href}">ciao</a></div>
+        </div>
+        <!--div class="button"><a href="">search</a></div-->
+        <!--div class="search-form"><div class="gcse-search" data-gname="storesearch"></div></div-->
+    </div>
+</header>
+
+<lc-topnav><div>
+    <!--a href="${url}">some</a>
+    <a href="${url}">path</a-->
+## for entry in nav.path
+    <a href="{{ entry.url }}">{{ entry.name }}</a>
+## endfor
+</div></lc-topnav>
+<!--div class="top-notice orange"><b>experiemntal</b></div-->
+
+<div class="top-notice orange">
+    Experimental
+</div>
+
+<lc-content>
+    <lc-sidebar>
+## if existsIn(meta, "related_articles")
+        <h2>Related articles</h2>
+        <ul>
+            <!--li><a href="//google.com">pippo</a></li-->
+## for entry in meta.related_articles
+            <li><a href="{{ entry.url }}">{{ entry.title }}</a></li>
+## endfor
+        </ul>
+## endif
+    </lc-sidebar>
+
+    <article>
+
+## if exists("article")
+{{ article }}
+## else
+        <h1>Article</h1>
+        Article goes here
+## endif
+
+    </article>
+
+    <div class="out-nav-index-container"><lc-nav-index class="out-nav-index"></lc-nav-index></div>
+
+</lc-content>
+
+
+<script src="{{ rootPath }}/opn/js/index.js"></script>
+</body>
+</html>
