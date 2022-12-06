@@ -50,7 +50,7 @@ jobs:
         run: |
           pwd
           ls
-          ./build/apps/lcdoc doc_src
+          ./build/apps/lcdoc/Debug/lcdoc doc_src
         
       - name: Setup Pages
         uses: actions/configure-pages@v2
