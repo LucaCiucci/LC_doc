@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=./lcdoc_schema.json
+#$schema: ./lcdoc_schema.json
+
+# This is the project file for the [lcdoc](https://github.com/LucaCiucci/LC_doc)
+# documentation generator, see README.md
+# Execute `lcdoc` to generate the documentation.
+
+projectName: test
+projectVersion: "7.2.3"
+inputDir: ./doc_src
+outDir: ./doc
+additionalMaterial:
+  - opn/css: C:\Users\lucac\Documents\develop\node\openphysicsnotes-content\css
+  - opn/js: C:\Users\lucac\Documents\develop\node\openphysicsnotes-content\js
+inputFiles:
+  #- some_other_src/main.cpp
+  - path: "src/a.cpp"
+    exclude: "src/**/exclude/*.{h,c,hpp,cpp}"
+    compilationOptions:
+      standard: c++20
+      defines:
+        - MY_DEFINE
+        - MY_DEFINE2: 1
+      undefines:
+        - PLUTO
+      includePaths:
+        - src/include
+        - src/include2
+      additionalFlags:
+        - "-DSOME_FLAG=42"
+templates:
+  models:
+    article: doc_src/templates/pages/article.html
+    plain-article: doc_src/templates/pages/plain-article.html

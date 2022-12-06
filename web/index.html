@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/OpenPhysicsNotes/openphysicsnotes-content/css/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/tex-math@latest/dist/tex-math.js" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/lc-ref@latest/dist/lc-ref.js" async></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/languages/latex.min.js"></script>
+    <script>
+        //hljs.highlightAll();
+        document.addEventListener("DOMContentLoaded", function() {{
+            document.querySelectorAll('code:not(.nohighlight)').forEach((block) => {{
+                //hljs.highlightElement(block);
+            }});
+            // https://github.com/highlightjs/highlight.js/issues/1737
+            document.querySelectorAll('code:not([class*="language-"])').forEach(function($) {
+                $.className = $.className ? $.className + ' no-highlight' : 'no-highlight';
+            });
+            hljs.configure({cssSelector: 'code[class*="language-"]'});
+            hljs.highlightAll();
+        }})
+    </script>
+
+</head>
+<body>
+
+    <header>
+        <div>
+            <!--div class="button"><a href="">OPN</a></div-->
+            <!--a href="/"><img class="button logo" src="//google.com/favicon.ico" alt="OPN"></img></a-->
+            <div class="button" style="font-size: 125%;"><a href="${href}">lcdoc</a></div>
+            <div class="links">
+                <div class="button"><a href="${href}">ciao</a></div>
+                <div class="button"><a href="${href}">ciao</a></div>
+                <div class="button"><a href="${href}">ciao</a></div>
+                <div class="button"><a href="${href}">ciao</a></div>
+            </div>
+            <!--div class="button"><a href="">search</a></div-->
+            <!--div class="search-form"><div class="gcse-search" data-gname="storesearch"></div></div-->
+        </div>
+    </header>
+
+    <lc-topnav><div><a href="${url}">some</a><a href="${url}">path</a></div></lc-topnav>
+    <!--div class="top-notice orange"><b>experiemntal</b></div-->
+
+    <lc-content>
+
+        <lc-sidebar>
+            <h2>Related articles</h2>
+            <ul>
+                <li><a href="#">some page</a></li>
+                <li><a href="#">some page</a></li>
+                <li><a href="#">some page</a></li>
+            </ul>
+        </lc-sidebar>
+
+        <article>
+           <!-- ------------------------------------------------------------------- -->
+
+           <h1>Writing documentation comments</h1>
+
+Suppose we have a function we want to documentate:
+<pre class="skip-1st-line"><code class="language-cpp">
+int sum(int a, int b);
+</code></pre>
+
+<h2>Brief and Long description</h2>
+
+<h3>Brief description only</h3>
+
+The simplest way is to use a triple <code class="nohighlight">/</code> (<code class="nohighlight"><code-comment>///</code-comment></code>) and a brief comment that does not contain a blank line
+<pre class="skip-1st-line"><code class="nohighlight">
+<code-comment><span class="squared red">///</span> This is a brief description</code-comment>
+<code-keyword>int</code-keyword> <code-function>sum</code-function>(<code-keyword>int</code-keyword> <code-pvar>a</code-pvar>, <code-keyword>int</code-keyword> <code-pvar>b</code-pvar>);
+</code></pre>
+Anothe way is to use a <a href="https://en.cppreference.com/w/c/comment#:~:text=single%20whitespace%20character.-,C%2Dstyle,content%20between%20%2F*%20and%20*%2F%20.">c-style comment</a>:
+<pre class="skip-1st-line"><code class="nohighlight">
+<code-comment><span class="squared red">/**</span> or <span class="squared red">/*!</span>
+* This is a brief description
+</code-comment>... or ...<code-comment>
+* <code-keyword>@brief</code-keyword> This is a brief description
+*/</code-comment>
+<code-keyword>int</code-keyword> <code-function>sum</code-function>(<code-keyword>int</code-keyword> <code-pvar>a</code-pvar>, <code-keyword>int</code-keyword> <code-pvar>b</code-pvar>);
+</code></pre>
+Where the <code class="nohighlight"><code-keyword>@brief</code-keyword></code> keyword can be omitted.
+
+<h3>Adding a long description</h3>
+You can add a long description by adding a blank line that separates the brief description, the <code class="nohighlight"><code-keyword>@brief</code-keyword></code> is not striclty necessary
+<pre class="skip-1st-line"><code class="nohighlight">
+<code-comment>/**
+* This is a brief description
+* 
+* This is a long description
+* Lorem ipsum dolor sit amet consectetur adipisicing elit.
+* Vitae sequi voluptas quod iure soluta quo,
+* dignissimos neque distinctio dolor earum repellat
+* placeat tempora delectus laboriosam deserunt eaque
+* at consequuntur et!
+*/</code-comment>
+<code-keyword>int</code-keyword> <code-function>sum</code-function>(<code-keyword>int</code-keyword> <code-pvar>a</code-pvar>, <code-keyword>int</code-keyword> <code-pvar>b</code-pvar>);
+</code></pre>
+
+<h2>Parameters</h2>
+
+LCDoc supports Doxygen style parameters documentation, it also adds support for bried and long description for each parameter
+<pre class="skip-1st-line"><code class="nohighlight">
+<code-comment>/**
+* This is a brief description
+* 
+* This is a long description
+*
+* <code-keyword>@param</code-keyword> <code-pvar>a</code-pvar> param `a` brief description
+* <code-keyword>@param</code-keyword> <code-pvar>b</code-pvar> param `b` brief description
+* 
+*     param `b` long description...
+* 
+* <code-keyword>@return</code-keyword> <code-pvar>sum</code-pvar> return brief description
+*
+*     return long description...
+*/</code-comment>
+<code-keyword>int</code-keyword> <code-function>sum</code-function>(<code-keyword>int</code-keyword> <code-pvar>a</code-pvar>, <code-keyword>int</code-keyword> <code-pvar>b</code-pvar>);
+</code></pre>
+
+<h2>HTML formatting</h2>
+
+With LCDoc, you are free to use any HTML feature, there are few caveats:
+<ul>
+    <li>
+        simple <code class="language-html">&lt;code&gt;</code> tags are transformed into <code class="language-html">&lt;code class="nohighlight"&gt;</code>, see BELOW!!!!!!
+    </li>
+    <li>
+        TODO ...
+    </li>
+</ul>
+
+<h3>Hyperlinks format</h3>
+Theese are the rules that the lcdoc uses to format hyperlinks:
+<ul>
+    <li>
+        <code class="language-html">&lt;a href="!something"&gt;</code> will be transformed into <code class="language-html">&lt;a href="something"&gt;</code>, i.e. the <code class="language-html"><code-string>!</code-string></code> will be removed and the link is not changed, use this to avoid any other rule application and leave the link "as is"
+    </li>
+    <li>
+        <code class="language-html">&lt;a href="./something"&gt;</code> this is a relative link, it will be left has-is in the final representation
+    </li>
+    <li>
+        <code class="language-html">&lt;a href="../something"&gt;</code> this is a parent relative link, it will be left has-is in the final representation
+    </li>
+    <li>
+        <code class="language-html">&lt;a href="/something"&gt;</code> this is an <b>origin-relative</b> link, it will be transformed into a relative link by default, but you can force it to be an absolute link by using the <code class="language-html">&lt;a href="!/something"&gt;</code> or by the corresponding option, see the <code class="language-html">&lt;a href="!something"&gt;</code> rule
+    </li>
+    <li>
+        <code class="language-html">&lt;a href="//example.com"&gt;</code> is a scheme-relative url, it will be left has-is in the final representation
+    </li>
+    <li>
+        <code class="language-html">&lt;a href="$something"&gt;</code> will be transformed into <code class="language-html">&lt;a href="resources-path/something"&gt;</code> or a different path if that particular resurce is different for the current file
+    </li>
+    <li>
+        <code class="language-html">&lt;a href="$$something"&gt;</code> will be transformed into <code class="language-html">&lt;a href="resources-path/something"&gt;</code> regardless of the current file overrides
+    </li>
+    <li>
+        <code class="language-html">&lt;a href="::something"&gt;</code> is a symbol link, it will be transformed into a link to the symbol documentation. The symbol link will be transformed into a link to the symbol documentation, if the symbol is not found, the link will be left as is. <br>
+        Note that some symbols have external documentation, for example the C++ standard library, and in that case the link will be transformed into a link to the external documentation. In this case if the there are ambiguities for the usage of different languages, the link will be left as is but you can use the <code class="language-html">&lt;a href=":::language-identifier::something"&gt;</code> rule to force the link to be transformed into a link to the symbol documentation of the specified language. For example:
+        <pre class="skip-1st-line"><code class="nohighlight language-html">
+<code-keyword>@see</code-keyword> <code-string>::std::vector</code-string>
+<code-keyword>@see</code-keyword> <code-string>::print</code-string> error if there are multiple languages in the current project
+<code-keyword>@see</code-keyword> <code-string>:::py::print</code-string> resolve to the python documentation of the print function
+<code-keyword>@see</code-keyword> <code-string>:::js::print</code-string> resolve to the javascript documentation of the print function
+</code></pre>
+    </li>
+    <!--<li>
+        <code class="language-html">&lt;a href="..."&gt;</code>
+    </li>-->
+</ul>
+See also the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a?retiredLocale=it#linking_to_relative_urls">MDN &lt;a&gt;</a> reference.
+
+<h2>LaTeX Equations</h2>
+
+You can insert LaTeX equations using the <a href="https://www.npmjs.com/package/tex-math">tex-math</a> package syntax, equations are displayed using <a href="https://www.npmjs.com/package/katex">katex</a>
+
+<pre class="skip-1st-line"><code class="nohighlight">
+<code-comment>* Inline equation example: <code-punctuation>&lt;</code-punctuation><code-tag>i-math</code-tag><code-punctuation>&gt;</code-punctuation><code-plain>x^y</code-plain><code-punctuation>&lt;/</code-punctuation><code-tag>i-math</code-tag><code-punctuation>&gt;</code-punctuation><code-punctuation>&lt;</code-punctuation><code-tag>br</code-tag><code-punctuation>&gt;</code-punctuation>
+* Equation:
+* <code-punctuation>&lt;</code-punctuation><code-tag>tex-math</code-tag><code-punctuation>&gt;</code-punctuation>
+*     <code-plain>i \hbar \frac{\partial}{\partial t} \psi = H \psi</code-plain>
+* <code-punctuation>&lt;/</code-punctuation><code-tag>tex-math</code-tag><code-punctuation>&gt;</code-punctuation></code-comment>
+</code></pre>
+that renders has:
+<div class="example-rendering">
+    Inline equation example: <i-math>x^y</i-math><br>
+    Equation:
+    <tex-math>
+        i \hbar \frac{\partial}{\partial t} \psi = H \psi
+    </tex-math>
+</div>
+
+<style>
+    .example-rendering {
+        border: 1px solid gray;
+        border-radius: 0.5em;
+        margin: 0.5em;
+        padding: 0.5em;
+        overflow: hidden;
+    }
+</style>
+
+
+<h3>HTML code inside equation</h3>
+
+You can also insert HTML elements inside equations usin the <code class="language-tex">\slot</code> command:
+<pre><code class="language-html">&lt;tex-math&gt;
+    R = \frac{\slot{1}}{\slot{second}}
+
+    &lt;code slot="1" style="text-align: left;"&gt;hello &lt;code-class&gt;Class&lt;/code-class&gt;&lt;/code&gt;
+    &lt;span slot="second" style="color: green;"&gt; second slot&lt;/span&gt;
+&lt;/tex-math&gt;</code></pre><div class="example-rendering">
+    <tex-math>
+        R = \frac{\slot{1}}{\slot{second}}
+
+        <code slot="1" style="text-align: left;">hello <code-class>Class</code-class></code>
+        <span slot="second" style="color: green;"> second slot</span>
+    </tex-math>
+</div>
+
+<h3>Numbering</h3>
+You can add a number to a block equation by simply add one of the following attributes:
+<ul>
+    <li><code class="nohighlight">id</code></li>
+    <li><code class="nohighlight">n</code></li>
+    <li><code class="nohighlight">number</code></li>
+</ul>
+Example:
+<pre><code class="language-html">&lt;tex-math n&gt;
+    x^2
+&lt;/tex-math&gt;</code></pre>Renders:
+<div class="example-rendering">
+    <tex-math n>
+        x^2
+    </tex-math>
+</div>
+
+<h3>Referencing equations</h3>
+To reference an equation, use the <code class="language-html">&lt;lc-ref&gt;</code> tag.
+<pre><code class="language-html">&lt;tex-math id="some_equation"&gt;
+    \int_0^1 x \; dx
+&lt;/tex-math&gt;
+Look at this awsome equation &lt;lc-ref ref="some_equation"&gt;eq .&lt;/lc-ref&gt;, if you hover the link, a preview will be shown!</code></pre><div class="example-rendering">
+    <tex-math id="some_equation">
+        \int_0^1 x \; dx
+    </tex-math>
+    Look at this awsome equation <lc-ref ref="some_equation">eq .</lc-ref>, if you hover the link, a preview will be shown!
+</div>
+
+<h2>Figures</h2>
+Figures can be inserted using the <code class="language-html">&lt;lc-figure&gt;</code> tag:
+<pre><code class="language-html">&lt;lc-figure&gt;
+    &lt;lc-todo slot="graphics"&gt;
+        Some image here, you have to slot it as "graphics"
+    &lt;/lc-todo&gt;
+    &lt;span slot="caption"&gt;some caption here&lt;/span&gt;
+    &lt;div slot="caption"&gt;Multiple captions will be joined like this!&lt;/div&gt;
+&lt;/lc-figure&gt;</code></pre><div class="example-rendering">
+    <lc-figure>
+        <lc-todo slot="graphics">
+            Some image here, you have to slot it as "graphics"
+        </lc-todo>
+        <span slot="caption">some caption here</span>
+        <div slot="caption">Multiple captions will be joined like this!</div>
+    </lc-figure>
+</div>
+You can reference using the usual <code class="language-html">&lt;lc-ref&gt;</code> tag.
+
+To make the figures float, some utils classes are provided:
+<ul>
+    <li>
+        <code class="language css">lc-figure.float.left</code>
+    </li>
+    <li>
+        <code class="language css">lc-figure.float.right</code>
+    </li>
+</ul>
+
+Example:
+<pre><code class="language-html">&lt;lc-figure class="float right"&gt;
+    ...
+&lt;/lc-figure&gt;</code></pre><div class="example-rendering">
+    <lc-figure class="float right">
+        <lc-todo slot="graphics">
+            Some image here, you have to slot it as "graphics"
+        </lc-todo>
+    </lc-figure>
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Non beatae molestiae voluptatibus, aliquid assumenda iusto quaerat veniam blanditiis quod tempora distinctio similique praesentium explicabo mollitia voluptates et doloribus libero quis?
+</div>
+
+<h3>Tikz figures</h3>
+<pre><code class="language-html">&lt;lc-figure&gt;
+    &lt;div slot="graphics"&gt;
+        \`\`\`tikzjax
+        \draw (0, 0) -- (2, 2);
+        \draw[red] (0, 2) -- (2, 0);
+        \draw[green, thick] (1, 1) ellipse (1 and 0.5);
+        \`\`\`
+    &lt;/div&gt;
+&lt;/lc-figure&gt;</code></pre>Tikz syntax is supported thanks to tikzjax:
+<lc-figure>
+    <div slot="graphics">
+
+<lc-tikz-fig-container>
+    <script type="text/tikz">
+        \begin{tikzpicture}
+                \draw (0, 0) -- (2, 2);
+                \draw[red] (0, 2) -- (2, 0);
+                \draw[green, thick] (1, 1) ellipse (1 and 0.5);
+        \end{tikzpicture}
+    </script>
+</lc-tikz-fig-container>
+    </div>
+</lc-figure>
+
+<h2>Code Snippets</h2>
+You can use markdown style code (<code class="nohighlight">\`</code> and <code class="nohighlight">\`\`\`</code> <a href="https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax">syntax</a>), or the html <code class="language-html">&lt;code&gt;</code> tag.
+
+If you want to escape the <code class="nohighlight">\`</code> character, you can use the <code class="nohighlight">&#92;&#96;</code> escape, or the <a href="https://mateam.net/html-escape-characters/">html escape</a> <code class="language-html">&amp;#96;</code>
+<lc-todo>
+    escape <code class="nohighlight">\\</code> and inline code with <code class="nohighlight">\`...\`</code>
+</lc-todo>
+
+<h3>Markdown Style</h3>
+<pre class="skip-1st-line"><code class="nohighlight">
+<code-comment>* inline code snippets <code-plain>`some code`</code-plain> (no language)
+* code block
+* <code-plain>\`\`\`</code-plain>
+* <code-plain>some preformatted text,</code-plain>
+* <code-plain>no syntax highlight</code-plain>
+* <code-plain>\`\`\`</code-plain>
+* some highlighted code:
+* <code-plain>\`\`\`cpp</code-plain>
+* <code-plain>int number = 42;</code-plain>
+* <code-plain>\`\`\`</code-plain></code-comment>
+</code></pre>
+
+<h3>Using the <code class="language-html">&lt;code&gt;</code> tag</h3>
+
+<div class="paragraph">
+    You can use the <code class="language-html">&lt;code&gt;</code> tag to archive the same result, it also gives you more freedom.
+</div>
+
+<div class="paragraph">
+    <!-- TODO warning -->
+    Simple <code class="language-html">&lt;code&gt;</code> tags are transformed into <code class="language-html">&lt;code class="nohighlight"&gt;</code> to disable <b>highlightjs</b> with plain code snippets. To disable di behaviour, simply add some class or attribute to the tag. For example, (for clarity) type <code class="language-html">&lt;code highlight&gt;</code> or <code class="language-html">&lt;code something&gt;</code> or any similar to enable <b>highlightjs</b> automatic language detection and syntax highlighting
+</div>
+
+Using the <code class="language-html">&lt;code&gt;</code> tag will trigger <a href="https://highlightjs.org/">highlightjs</a>:
+<pre class="skip-1st-line"><code class="language-html">
+&lt;pre&gt;&lt;code highlight&gt;
+&lt;!-- auto language detection --&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class="language-cpp"&gt;
+int i = 42;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class="nohighlight"&gt;
+// no syntax hilight here
+int i = 42;
+&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
+
+This also works with inline code!
+<pre class="skip-1st-line"><code class="language-html">
+inline code &lt;code hl&gt;&lt;!-- auto language detection --&gt;&lt;/code&gt;!
+
+&lt;pre&gt;&lt;code class="language-cpp"&gt;
+int i = 42;
+&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
+
+You can manually highlight code in this way:
+<pre class="skip-1st-line"><code class="language-html">
+&lt;pre&gt;&lt;code class="nohighlight"&gt;
+&lt;code-keyword&gt;class&lt;/code-keyword&gt; &lt;code-class&gt;MyClass&lt;/code-class&gt;;
+&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
+that will be rendered as:
+<pre class="skip-1st-line"><code class="nohighlight">
+<code-keyword>class</code-keyword> <code-class>MyClass</code-class>;
+</code></pre>
+
+
+           <!-- ------------------------------------------------------------------- -->
+        </article>
+
+        <div class="out-nav-index-container"><lc-nav-index class="out-nav-index"></lc-nav-index></div>
+
+    </lc-content>
+
+
+    <script src="https://cdn.jsdelivr.net/gh/OpenPhysicsNotes/openphysicsnotes-content/js/index.js"></script>
+    
+</body>
+</html>

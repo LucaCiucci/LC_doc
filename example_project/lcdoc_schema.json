@@ -1,0 +1,139 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "type": "object",
+    "definitions": {
+        "inputFileOptions": {
+            "type": "object",
+            "properties": {
+                "standard": {
+                    "description": "The C++ standard to use",
+                    "type": "string",
+                    "enum": [
+                        "c++98",
+                        "c++03",
+                        "c++11",
+                        "c++14",
+                        "c++17",
+                        "c++20",
+                        "c++23"
+                    ]
+                },
+                "includeDirs": {
+                    "description": "Additional include directories",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "additionalFlags": {
+                    "description": "Additional clang flags",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "defines": {
+                    "description": "Additional preprocessor definitions",
+                    "type": "array",
+                    "items": {
+                        "type": [ "object", "string" ],
+                        "additionalProperties": {
+                            "type": ["string", "number"]
+                        }
+                    }
+                },
+                "undefines": {
+                    "description": "Preprocessor undefines",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    },
+    "properties": {
+        "projectName": {
+            "description": "The title of the project",
+            "type": "string"
+        },
+        "projectVersion": {
+            "description": "The version of the project",
+            "type": [ "string", "number", "array" ],
+            "items": {
+                "type": [ "string", "number" ]
+            }
+        },
+        "rootDir": {
+            "description": "The root directory of the project, if not set the directory of the project file is used",
+            "type": "string"
+        },
+        "inputDir": {
+            "description": "The documentation input directory",
+            "type": "string"
+        },
+        "outDir" : {
+            "description": "The output directory for the documentation",
+            "type": "string"
+        },
+        "additionalMaterial": {
+            "description": "Additional material to copy to the output directory",
+            "type": "array",
+            "items": {
+                "type": [ "object", "string" ],
+                "additionalProperties": {
+                    "type": "string"
+                }
+            }
+        },
+        "compilationOptions": {
+            "description": "Compilation properties that applies to all files",
+            "$ref": "#/definitions/inputFileOptions"
+        },
+        "inputFiles": {
+            "description": "The input files for the project, paths are relative to the project file and can be a glob pattern",
+            "type": "array",
+            "items": {
+                "type": [ "object", "string" ],
+                "properties": {
+                    "path": {
+                        "description": "File[s] path",
+                        "type": [ "string", "array" ],
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "excludes": {
+                        "description": "Excluded files, useful if path is a glob pattern",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "compilationOptions": {
+                        "description": "Compilation properties that applies to this files",
+                        "$ref": "#/definitions/inputFileOptions"
+                    }
+                },
+                "required": ["path"]
+            },
+            "minItems": 1
+        },
+        "templates": {
+            "description": "...",
+            "type": "object",
+            "properties": {
+                "models": {
+                    "description": "The models to use for the templates",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            },
+            "additionalItems": false
+        }
+    },
+    "required": [ "projectName", "projectVersion", "inputDir", "outDir", "inputFiles" ],
+    "additionalProperties": false
+}
