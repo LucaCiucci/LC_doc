@@ -9,7 +9,7 @@
 projectName: LC_doc
 projectVersion: "0.0.0"
 inputDir: ./website
-outDir: ../doc
+outDir: ../docs
 additionalMaterial:
   - opn/css: C:\Users\lucac\Documents\develop\node\openphysicsnotes-content\css
   - opn/js: C:\Users\lucac\Documents\develop\node\openphysicsnotes-content\js
