@@ -9,6 +9,12 @@ project(
 	HOMEPAGE_URL "https://github.com/LucaCiucci/LC_doc"
 )
 
+set(LC_DOC_MAIN_PROJECT FALSE)
+set(LC_DOC_MAIN_PROJECT2 FALSE)
+if ((CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR) AND (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME))
+	set(LC_DOC_MAIN_PROJECT TRUE)
+endif()
+
 include(cmake/libclang.cmake)
 
 include(FetchContent)

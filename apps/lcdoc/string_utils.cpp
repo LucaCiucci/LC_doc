@@ -31,5 +31,6 @@ namespace lcdoc
 		}
 
 		assert(0);
+		return nlohmann::json();
 	}
 }

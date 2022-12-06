@@ -72,13 +72,9 @@ namespace lcdoc
 
 		const auto& models = this->project->models;
 		const auto modelIt = models.find(type);
-		for (const auto& [key, modelPath] : models)
-			std::cout << key << ", " << modelPath << std::endl;
-		std::cout << "requested: " << type << std::endl;
 		if (modelIt != models.end())
 		{
 			const auto& [key, modelPath] = *modelIt;
-			std::cout << key << ", " << modelPath << std::endl;
 
 			return [this, modelPath](const path& in, const path& out, const path& basePath, const string& ext) -> void {
 				const string& raw = read2str(std::ifstream(in));
@@ -93,7 +89,6 @@ namespace lcdoc
 				data["nav"]["path"].push_back(json({ {"name", "ciao"}, {"url", "#url"} }));
 				//data["rootPath"] = "."s;
 				data["rootPath"] = basePath.string().empty() ? "."s : basePath.string();
-				std::cout << "basePath is " << basePath << " | " << data["rootPath"] << " for " << in << std::endl;
 
 				string r;
 				try {
