@@ -8,8 +8,8 @@
 
 projectName: LC_doc
 projectVersion: "0.0.0"
-inputDir: ./website
-outDir: ../docs
+inputDir: doc_src/website
+outDir: docs
 additionalMaterial:
   - opn/css: C:\Users\lucac\Documents\develop\node\openphysicsnotes-content\css
   - opn/js: C:\Users\lucac\Documents\develop\node\openphysicsnotes-content\js
@@ -31,4 +31,4 @@ inputFiles:
         - "-DSOME_FLAG=42"
 templates:
   models:
-    article: templates/pages/article.html
+    article: doc_src/templates/pages/article.html
