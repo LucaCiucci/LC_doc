@@ -44,7 +44,7 @@ jobs:
           
       - name: build docs
         id: build-docs
-        run: lcdoc .
+        run: .\lcdoc.exe .
         
       - name: Setup Pages
         uses: actions/configure-pages@v2
