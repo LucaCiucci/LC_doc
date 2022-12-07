@@ -39,6 +39,9 @@ jobs:
           url: https://github.com/LucaCiucci/LC_doc/releases/download/v0.0.0-incomplete/lcdoc.exe
           target: ./
           
+      - name: tmp
+        run: dir
+          
       - name: build docs
         id: build-docs
         run: lcdoc .
