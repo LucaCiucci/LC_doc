@@ -1,3 +1,4 @@
+---
 title: LC_doc
 author: Luca Ciucci
 related_articles:
@@ -7,10 +8,37 @@ related_articles:
 
 <h1>LC_doc</h1>
 
-LC_doc is a project that aims to provide a simple, easy to use and customizable documentation generator for your projects.
+<h2>Introduction</h2>
 
-<pre><code class="language-shell">$ ciao --viao
-    ciao --viao
-</code></pre>
+<paragraph>
+  LC_doc is a project that aims to provide a simple, easy to use and customizable documentation generator for your projects.
+</paragraph>
 
-ciao
+<paragraph>
+  <i>LC_doc</i> provides:
+  <ul>
+    <li>a <code>lcdoc</code> executable that can be used to generate documentation from your source code.</li>
+    <li>a <code>LC_doc</code> library that can be used to easily create a custom documentation generator</li>
+  </ul>
+</paragraph>
+
+<paragraph>
+  <code>lcdoc</code> is a command line tool that takes a yaml project file as input which describes the source code and additional pages to be included in the documentation. It produces a static website that can be hosted on any web server.
+</paragraph>
+
+<h2>Roadmap</h2>
+
+<ul>
+  <li><check-box checked></check-box> a basic static website generator</li>
+  <li><check-box partial></check-box> parse C++ code using <tool-tip>libclang<tooltip-popup>a simple <a href="https://clang.llvm.org/doxygen/group__CINDEX.html">library</a> used to parse C++ code using clang</tooltip-popup></tool-tip></li>
+  <li><check-box></check-box> add more languages, for example Rust, js, Python, ...</li>
+  <li><check-box></check-box> output parsing result</li>
+  <li><check-box></check-box> static syntax highlighting using libclang</li>
+  <li><check-box></check-box> ...</li>
+</ul>
+
+<tool-tip>ciao <tooltip-popup>ciao</tooltip-popup></tool-tip>
+
+<style>
+  
+</style>

@@ -39,7 +39,7 @@ FetchContent_MakeAvailable(yaml-cpp)
 
 FetchContent_Declare(
 	p-ranav-glob
-	GIT_REPOSITORY https://github.com/p-ranav/glob
+	GIT_REPOSITORY https://github.com/LucaCiucci/glob
 )
 FetchContent_MakeAvailable(p-ranav-glob)
 
@@ -57,4 +57,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
+FetchContent_Declare(
+	efsw
+	#GIT_REPOSITORY https://github.com/SpartanJ/efsw
+	GIT_REPOSITORY https://github.com/LucaCiucci/efsw
+)
+FetchContent_MakeAvailable(efsw)
+
 add_subdirectory(apps)
+
+install(SCRIPT "${CMAKE_SOURCE_DIR}/cmake/post_install.cmake")

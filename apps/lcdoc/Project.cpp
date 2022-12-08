@@ -56,7 +56,7 @@ namespace lcdoc
 	{
 		assert((bool)this->project);
 
-		auto identityTransformer = [](const path& in, const path& out, const path& basePath, const string& ext) -> void {
+		auto identityTransformer = [](const path& in, const path& out, const path& basePath, const path& relativePath, const string& ext) -> void {
 			std::ofstream file(out);
 			file << read2str(std::ifstream(in));
 		};
@@ -76,7 +76,7 @@ namespace lcdoc
 		{
 			const auto& [key, modelPath] = *modelIt;
 
-			return [this, modelPath](const path& in, const path& out, const path& basePath, const string& ext) -> void {
+			return [this, modelPath](const path& in, const path& out, const path& basePath, const path& relativePath, const string& ext) -> void {
 				const string& raw = read2str(std::ifstream(in));
 				auto sep = extractMeta(raw);
 				
@@ -85,10 +85,28 @@ namespace lcdoc
 				json data;
 				data["meta"] = to_json(YAML::Load(sep.meta));
 				data["article"] = sep.content;
-				data["nav"]["path"].push_back(json({ {"name", "ciao"}, {"url", "#url"} }));
-				data["nav"]["path"].push_back(json({ {"name", "ciao"}, {"url", "#url"} }));
+				//data["nav"]["path"].push_back(json({ {"name", "ciao"}, {"url", "#url"} }));
+				//data["nav"]["path"].push_back(json({ {"name", "ciao"}, {"url", "#url"} }));
 				//data["rootPath"] = "."s;
 				data["rootPath"] = basePath.string().empty() ? "."s : basePath.string();
+
+				{
+					// spit relative path
+					string path = relativePath.string();
+					replace_all(path, "\\\\", "\\");
+					replace_all(path, "\\", "/");
+					auto pieces = split(path, "/");
+					string complete = "";
+					for (const auto& piece : pieces)
+					{
+						if (piece.empty())
+							continue;
+
+						complete += "/" + piece;
+
+						data["nav"]["path"].push_back(json({ {"name", piece}, {"url", complete} }));
+					}
+				}
 
 				string r;
 				try {
@@ -192,9 +210,6 @@ namespace lcdoc
 			const auto relative = std::filesystem::relative(path, inputDir);
 			const auto relativeDir = relative.parent_path();
 			const auto basePath = std::filesystem::relative(inputDir, path.parent_path());
-			std::cout << "inputDir: " << inputDir << std::endl;
-			std::cout << "path.parent_path(): " << path.parent_path() << std::endl;
-			std::cout << "basePath: " << basePath << std::endl;
 
 			if (std::filesystem::is_directory(path))
 				std::filesystem::create_directories(outDir / relative);
@@ -209,7 +224,8 @@ namespace lcdoc
 					const auto transformer = this->getDocumentTransformerFor(sep.value().transformerName);
 					
 					const auto outFilePath = outDir / relativeDir / (sep.value().stem + sep.value().ext);
-					transformer(path, outFilePath, basePath, sep.value().ext);
+					std::cout << "transforming " << (relativeDir / (sep.value().stem + sep.value().ext)) << std::endl;
+					transformer(path, outFilePath, basePath, relativeDir / (sep.value().stem + sep.value().ext), sep.value().ext);
 				}
 			}
 		}

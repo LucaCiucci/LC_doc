@@ -31,6 +31,10 @@
 ## if existsIn(meta, "favicon")
     <!-- favicon -->
     {{ favicon_tag(meta.favicon) }}
+## else
+    <!-- favicon -->
+    {# favicon_tag("https://cdn.jsdelivr.net/gh/OpenPhysicsNotes/openphysicsnotes-content/favicon2.svg") #}
+    {{ favicon_tag(rootPath + "/favicon.svg") }}
 ## endif
 ## if existsIn(meta, "canonical")
     <!-- canonical -->
@@ -58,19 +62,21 @@
 
     <!-- styles -->
     <!--link href="{{ rootPath }}/opn/css/style.css" rel="stylesheet"/-->
-    <link href="//cdn.jsdelivr.net/gh/OpenPhysicsNotes/openphysicsnotes-content/css/style.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/gh/OpenPhysicsNotes/openphysicsnotes-content/css/style.css" rel="stylesheet"/>
     <!--link href="{{ rootPath }}/opn/css/tool-tip.css" rel="stylesheet"/-->
-    <link href="//cdn.jsdelivr.net/gh/OpenPhysicsNotes/openphysicsnotes-content/css/tool-tip.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/gh/OpenPhysicsNotes/openphysicsnotes-content/css/tool-tip.css" rel="stylesheet"/>
     <style>code span { text-decoration: none; color: inherit; }</style>
+    <link rel="stylesheet" href="{{ rootPath }}/css/checkbox.css">
+    <link rel="stylesheet" href="{{ rootPath }}/css/more_code.css">
 
     <!-- scripts -->
     <!--script async="" src="{{ rootPath }}/opn/js/tool-tip.js"></script-->
-    <script async="" src="//cdn.jsdelivr.net/gh/OpenPhysicsNotes/openphysicsnotes-content/js/tool-tip.js"></script>
-    <script async="" src="//cdn.jsdelivr.net/npm/tex-math@latest/dist/tex-math.js"></script>
-    <script async="" src="//cdn.jsdelivr.net/npm/lc-ref@latest/dist/lc-ref.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/languages/latex.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/languages/shell.min.js"></script>
+    <script async="" src="https://cdn.jsdelivr.net/gh/OpenPhysicsNotes/openphysicsnotes-content/js/tool-tip.js"></script>
+    <script async="" src="https://cdn.jsdelivr.net/npm/tex-math@latest/dist/tex-math.js"></script>
+    <script async="" src="https://cdn.jsdelivr.net/npm/lc-ref@latest/dist/lc-ref.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/languages/latex.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/languages/shell.min.js"></script>
     <script>//hljs.highlightAll();
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll('code:not(.nohighlight)').forEach((block) => {
@@ -83,6 +89,7 @@
         hljs.configure({cssSelector: 'code[class*="language-"]'});
         hljs.highlightAll();
     })</script>
+    <script async="" src="{{ rootPath }}/js/preprocess.js"></script>
 
 </head>
 <body>
@@ -94,13 +101,14 @@
 <header>
     <div>
         <!--div class="button"><a href="">OPN</a></div-->
-        <!--a href="/"><img class="button logo" src="//google.com/favicon.ico" alt="OPN"></img></a-->
+        <!--a href="/"><img class="button logo" src="https://google.com/favicon.ico" alt="OPN"></img></a-->
         <div class="button" style="font-size: 125%;"><a href="{{ rootPath }}">lcdoc</a></div>
         <div class="links">
-            <div class="button"><a href="{{ rootPath }}/tutorial">Tutorials</a></div>
-            <div class="button"><a href="${href}">ciao</a></div>
-            <div class="button"><a href="${href}">ciao</a></div>
-            <div class="button"><a href="${href}">ciao</a></div>
+            <div class="button"><a href="{{ rootPath }}/tutorial/">Tutorials</a></div>
+            <div class="button"><a href="{{ rootPath }}/documentation/">Documentation</a></div>
+            <div class="button"><a href="{{ rootPath }}/examples/">Examples</a></div>
+            <div class="button"><a href="{{ rootPath }}/api/">Api</a></div>
+            <div class="button"><a href="{{ rootPath }}/about/">About</a></div>
         </div>
         <!--div class="button"><a href="">search</a></div-->
         <!--div class="search-form"><div class="gcse-search" data-gname="storesearch"></div></div-->
@@ -110,8 +118,9 @@
 <lc-topnav><div>
     <!--a href="${url}">some</a>
     <a href="${url}">path</a-->
+    <a href="{{ rootPath }}"><img src="{{ rootPath }}/img/home.svg" alt="home" style="height: 1em;"></a>
 ## for entry in nav.path
-    <a href="{{ entry.url }}">{{ entry.name }}</a>
+    <a href="{{ rootPath }}{{ entry.url }}">{{ entry.name }}</a>
 ## endfor
 </div></lc-topnav>
 <!--div class="top-notice orange"><b>experiemntal</b></div-->
@@ -125,7 +134,7 @@
 ## if existsIn(meta, "related_articles")
         <h2>Related articles</h2>
         <ul>
-            <!--li><a href="//google.com">pippo</a></li-->
+            <!--li><a href="https://google.com">pippo</a></li-->
 ## for entry in meta.related_articles
             <li><a href="{{ entry.url }}">{{ entry.title }}</a></li>
 ## endfor
@@ -150,6 +159,6 @@
 
 
 <!--script src="{{ rootPath }}/opn/js/index.js"></script-->
-<script src="//cdn.jsdelivr.net/gh/OpenPhysicsNotes/openphysicsnotes-content/js/index.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/OpenPhysicsNotes/openphysicsnotes-content/js/index.js"></script>
 </body>
 </html>

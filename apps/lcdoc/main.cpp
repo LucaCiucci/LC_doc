@@ -9,6 +9,9 @@
 
 #include <cmrc/cmrc.hpp>
 
+// !!!
+#include <efsw/efsw.hpp>
+
 #include "clang_interface/TranslationUnit.hpp"
 
 #include "html_page.hpp"
@@ -23,6 +26,52 @@ CMRC_DECLARE(lcdoc);
 
 using std::make_shared;
 
+// Inherits from the abstract listener class, and implements the the file action handler
+class FuncitonalUpdateListener final : public efsw::FileWatchListener {
+public:
+
+	using Listener = std::function<void(efsw::WatchID watchid, const std::string& dir,
+		const std::string& filename, efsw::Action action,
+		std::string oldFilename)>;
+
+	Listener listener;
+	std::function<void(void)> boldLstener;
+
+	void handleFileAction(efsw::WatchID watchid, const std::string& dir,
+		const std::string& filename, efsw::Action action,
+		std::string oldFilename) override {
+		switch (action) {
+		case efsw::Actions::Add:
+			std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Added"
+				<< std::endl;
+			break;
+		case efsw::Actions::Delete:
+			std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Delete"
+				<< std::endl;
+			break;
+		case efsw::Actions::Modified:
+			std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Modified"
+				<< std::endl;
+			break;
+		case efsw::Actions::Moved:
+			std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Moved from ("
+				<< oldFilename << ")" << std::endl;
+			break;
+		default:
+			std::cout << "Should never happen!" << std::endl;
+		}
+
+		if (this->listener)
+			this->listener(watchid, dir, filename, action, oldFilename);
+
+		if (this->boldLstener)
+			this->boldLstener();
+	}
+};
+
+void prepareConsole(void);
+void printArgs(int argc, char** argv);
+
 void printHelp(void)
 {
 	// TODO help
@@ -36,11 +85,12 @@ int main(int argc, char** argv)
 	using std::vector;
 	using std::exception;
 	using std::filesystem::path;
+	
+	prepareConsole();
 
 	std::cout << colorize("Hello There!", { 0, 255, 0 }) << std::endl;
 
-	for (int i = 0; i < argc; ++i)
-		std::cout << colorize("argv", { 150, 150, 150 }) << "[" << colorize(std::to_string(i), { 181, 206, 168 }) << "]: " << colorize(argv[i], {214, 157, 122}) << std::endl;
+	printArgs(argc, argv);
 	
 
 	// check if help is required
@@ -52,10 +102,7 @@ int main(int argc, char** argv)
 	}();
 
 	if (help)
-	{
-		printHelp();
-		return 0;
-	}
+		return printHelp(), EXIT_SUCCESS;
 
 	// get the first argument
 	const string arg = [&]() -> string {
@@ -89,7 +136,7 @@ int main(int argc, char** argv)
 		catch (const std::exception& e)
 		{
 			std::cerr << "Failed to get working dir and project file: " << e.what() << std::endl;
-			exit(0); // !!!
+			exit(EXIT_FAILURE); // !!!
 		}
 		return {};
 	}();
@@ -97,9 +144,9 @@ int main(int argc, char** argv)
 	std::cout << "working dir:  " << workingDir << std::endl;
 	std::cout << "project file: " << projectFile << std::endl;
 
+	// create the main project
 	auto project = std::make_shared<CXXProject>();
 	project->rootDir = workingDir;
-	//project->models["article"] = R"(C:\Users\lucac\Documents\develop\vs\libraries\LC_doc\example_project\doc_src\templates\pages\article.html)";
 
 	try
 	{
@@ -117,7 +164,26 @@ int main(int argc, char** argv)
 
 	generator.generate();
 
-	return 0;
+	// !!!
+	{
+		efsw::FileWatcher fileWatcher;
+
+		FuncitonalUpdateListener listener;
+		listener.boldLstener = [&]() {
+			generator.generate();
+		};
+
+		auto watchID = fileWatcher.addWatch(project->inputDir.string(), &listener, true);
+
+		fileWatcher.watch();
+
+		// loop forever
+		while (true) {
+			std::this_thread::yield();
+		}
+	}
+
+	return EXIT_SUCCESS;
 
 	project->inputFilesOptions.standard = "c++20";
 	project->inputFilesOptions.additionalIncludeDirs.insert(R"(C:\Program Files\LLVM\include)");
@@ -135,5 +201,31 @@ int main(int argc, char** argv)
 
 	//test();
 
-	return 0;
+	return EXIT_SUCCESS;
+}
+
+void prepareConsole(void)
+{
+#ifdef WIN32
+	// TODO sposta su una libreria
+	// Allow usage of ANSI escape sequences on Windows 10
+	// and UTF-8 console output
+	std::system("chcp 65001 > NUL");
+#endif
+}
+
+void printArgs(int argc, char** argv)
+{
+	using std::cout;
+	using std::endl;
+	using std::to_string;
+	using lcdoc::colorize;
+	using lcdoc::terminal_color_t;
+
+	const terminal_color_t pvarColor = { 150, 150, 150 };
+	const terminal_color_t numberColor = { 181, 206, 168 };
+	const terminal_color_t stringColor = { 214, 157, 122 };
+	
+	for (int i = 0; i < argc; ++i)
+		cout << colorize("argv", pvarColor) << "[" << colorize(to_string(i), numberColor) << "]: " << colorize(argv[i], stringColor) << endl;
 }

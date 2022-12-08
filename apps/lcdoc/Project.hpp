@@ -106,7 +106,7 @@ namespace lcdoc
 	{
 	public:
 
-		using DocumentTransformer = std::function<void(const path& in, const path& out, const path& basePath, const string& ext)>;
+		using DocumentTransformer = std::function<void(const path& in, const path& out, const path& basePath, const path& relativeDir, const string& ext)>;
 
 		Generator(const shared_ptr<CXXProject>& project, const shared_ptr<ParsedCXXProject>& parsedProject) :
 			project(project),

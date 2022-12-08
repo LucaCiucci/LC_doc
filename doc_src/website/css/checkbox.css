@@ -1,0 +1,40 @@
+
+
+check-box {
+    display: inline-block;
+    border: 2px solid gray;
+    border-radius: 5px;
+    position: relative;
+    margin-right: 0.25em;
+    margin-left: 0.25em;
+    padding: 0.25em;
+    width: 1.5em;
+    height: 1.5em;
+    font-size: 0.5em;
+}
+
+check-box[checked] {
+    /*background-color:royalblue;*/
+}
+
+/* leave an empty border */
+check-box[checked]::after {
+    background: royalblue;
+    content: "✔";
+    position: absolute;
+    top: 0.25em;
+    left: 0.25em;
+    color: white;
+    height: 1.5em;
+    width: 1.5em;
+    text-align: center;
+}
+
+
+/* only a blue upper triangle */
+check-box[partial] {
+    /* see https://www.coding-dude.com/wp/css/create-a-triangle/ */
+    --color: royalblue;
+    background: linear-gradient(to top left, transparent 0%, transparent 50%, var(--color) 50%, var(--color) 100%);
+
+}
