@@ -142,6 +142,18 @@ namespace
 				if (cursor.isDefinition())
 					sym->definitions.insert(to_location(cursorLocation));
 
+				if (cursor.isDefinition() || cursor.isDeclaration())
+				{
+					const string brief = cursor.briefCommentText();
+					const string raw = cursor.rawCommentText();
+
+					if (!brief.empty())
+						sym->docStr.brief = brief;
+
+					if (!raw.empty() && raw.length() > sym->docStr.raw.length())
+						sym->docStr.raw = raw;
+				}
+
 				registry.add(sym);
 			}
 
