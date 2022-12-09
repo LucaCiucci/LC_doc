@@ -12,6 +12,8 @@
 // !!!
 #include <efsw/efsw.hpp>
 
+#include <argparse/argparse.hpp>
+
 #include "clang_interface/TranslationUnit.hpp"
 
 #include "html_page.hpp"
@@ -40,26 +42,6 @@ public:
 	void handleFileAction(efsw::WatchID watchid, const std::string& dir,
 		const std::string& filename, efsw::Action action,
 		std::string oldFilename) override {
-		switch (action) {
-		case efsw::Actions::Add:
-			std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Added"
-				<< std::endl;
-			break;
-		case efsw::Actions::Delete:
-			std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Delete"
-				<< std::endl;
-			break;
-		case efsw::Actions::Modified:
-			std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Modified"
-				<< std::endl;
-			break;
-		case efsw::Actions::Moved:
-			std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Moved from ("
-				<< oldFilename << ")" << std::endl;
-			break;
-		default:
-			std::cout << "Should never happen!" << std::endl;
-		}
 
 		if (this->listener)
 			this->listener(watchid, dir, filename, action, oldFilename);
@@ -70,7 +52,6 @@ public:
 };
 
 void prepareConsole(void);
-void printArgs(int argc, char** argv);
 
 void printHelp(void)
 {
@@ -78,7 +59,7 @@ void printHelp(void)
 	std::cout << "TODO: help" << std::endl;
 }
 
-int main(int argc, char** argv)
+int main(int argc, const char* argv[])
 {
 	using namespace lcdoc::clang;
 	using namespace lcdoc;
@@ -88,33 +69,37 @@ int main(int argc, char** argv)
 	
 	prepareConsole();
 
-	std::cout << colorize("Hello There!", { 0, 255, 0 }) << std::endl;
+	argparse::ArgumentParser program("lcdoc", "0.0.0");
 
-	printArgs(argc, argv);
-	
+	program.add_description("LC documentation generator");
+	program.add_epilog("TODO ...");
 
-	// check if help is required
-	const bool help = [&]() -> bool {
-		for (int i = 0; i < argc; ++i)
-			if (string(argv[i]).starts_with("-h") || string(argv[i]).starts_with("--h"))
-				return true;
-		return false;
-	}();
+	program
+		.add_argument("path")
+		.help("the folder containing a lcdoc.yaml project or a specific .yaml project file")
+		.default_value(string("."));
 
-	if (help)
-		return printHelp(), EXIT_SUCCESS;
+	program
+		.add_argument("-w", "--watch")
+		.help("watch for changes")
+		.default_value(false)
+		.implicit_value(true);
 
-	// get the first argument
-	const string arg = [&]() -> string {
-		if (argc <= 1)
-			return "";
-		return argv[1];
-	}();
+	try
+	{
+		program.parse_args(argc, argv);
+	}
+	catch (const std::runtime_error& err)
+	{
+		std::cerr << err.what() << std::endl;
+		std::cerr << program;
+		return EXIT_FAILURE;
+	}
 
 	// get the working directory and the project file
 	const auto& [workingDir, projectFile] = [&]() -> std::pair<path, path> {
 		try {
-			const path inputPath = std::filesystem::absolute(arg.empty() ? "." : arg);
+			const path inputPath = std::filesystem::absolute(program.get<string>("path"));
 
 			if (!std::filesystem::exists(inputPath))
 				throw std::runtime_error("input path does not exists");
@@ -177,10 +162,10 @@ int main(int argc, char** argv)
 
 		fileWatcher.watch();
 
-		// loop forever
-		while (true) {
-			std::this_thread::yield();
-		}
+		if (program["--watch"] == true)
+			// loop forever
+			while (true)
+				std::this_thread::yield();
 	}
 
 	return EXIT_SUCCESS;
@@ -188,18 +173,6 @@ int main(int argc, char** argv)
 	project->inputFilesOptions.standard = "c++20";
 	project->inputFilesOptions.additionalIncludeDirs.insert(R"(C:\Program Files\LLVM\include)");
 	project->inputFiles.push_back(CXXInputSourceFile{ .path = "C:/Users/lucac/Documents/develop/vs/libraries/LC_doc/apps/lcdoc/main.cpp" });
-
-	// !!!
-	try {
-		std::filesystem::create_directory_symlink(R"amfedpsv(C:\Users\lucac\Documents\develop\node\openphysicsnotes-content)amfedpsv", std::filesystem::absolute("./out2/opn"));
-	}
-	catch (const std::exception& e) {
-		std::cerr << e.what() << std::endl;
-	}
-
-	//write_list_page(outDir / "ciao.html", parser.registry);
-
-	//test();
 
 	return EXIT_SUCCESS;
 }
@@ -212,20 +185,4 @@ void prepareConsole(void)
 	// and UTF-8 console output
 	std::system("chcp 65001 > NUL");
 #endif
-}
-
-void printArgs(int argc, char** argv)
-{
-	using std::cout;
-	using std::endl;
-	using std::to_string;
-	using lcdoc::colorize;
-	using lcdoc::terminal_color_t;
-
-	const terminal_color_t pvarColor = { 150, 150, 150 };
-	const terminal_color_t numberColor = { 181, 206, 168 };
-	const terminal_color_t stringColor = { 214, 157, 122 };
-	
-	for (int i = 0; i < argc; ++i)
-		cout << colorize("argv", pvarColor) << "[" << colorize(to_string(i), numberColor) << "]: " << colorize(argv[i], stringColor) << endl;
 }

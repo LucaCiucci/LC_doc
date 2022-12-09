@@ -64,6 +64,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(efsw)
 
+FetchContent_Declare(
+	argparse
+	#GIT_REPOSITORY https://github.com/jamolnng/argparse
+	GIT_REPOSITORY https://github.com/p-ranav/argparse
+)
+FetchContent_MakeAvailable(argparse)
+
 add_subdirectory(apps)
 
 install(SCRIPT "${CMAKE_SOURCE_DIR}/cmake/post_install.cmake")

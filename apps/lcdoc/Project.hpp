@@ -42,7 +42,7 @@ namespace lcdoc
 
 			// standard
 			if (!this->standard.empty())
-				options.push_back(format("R(-std={})", this->standard));
+				options.push_back(format(R"(-std={})", this->standard));
 
 			// include
 			for (const string& dir : this->additionalIncludeDirs)

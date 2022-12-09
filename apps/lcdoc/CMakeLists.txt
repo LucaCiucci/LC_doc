@@ -20,6 +20,7 @@ target_link_libraries(lcdoc PRIVATE Glob)
 target_link_libraries(lcdoc PRIVATE nlohmann_json::nlohmann_json)
 target_include_directories(lcdoc PRIVATE "${inja_SOURCE_DIR}/include")
 target_link_libraries(lcdoc PRIVATE efsw)
+target_link_libraries(lcdoc PRIVATE argparse)
 
 target_compile_definitions(lcdoc PRIVATE LCDOC_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 

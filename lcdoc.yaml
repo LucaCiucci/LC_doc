@@ -10,25 +10,20 @@ projectName: LC_doc
 projectVersion: "0.0.0"
 inputDir: doc_src/website
 outDir: docs
-additionalMaterial:
-  - opn/css: C:\Users\lucac\Documents\develop\node\openphysicsnotes-content\css
-  - opn/js: C:\Users\lucac\Documents\develop\node\openphysicsnotes-content\js
-inputFiles:
-  #- some_other_src/main.cpp
-  - path: "src/a.cpp"
-    exclude: "src/**/exclude/*.{h,c,hpp,cpp}"
-    compilationOptions:
-      standard: c++20
-      defines:
-        - MY_DEFINE
-        - MY_DEFINE2: 1
-      undefines:
-        - PLUTO
-      includePaths:
-        - src/include
-        - src/include2
-      additionalFlags:
-        - "-DSOME_FLAG=42"
+#additionalMaterial:
+#  - opn/css: C:\Users\lucac\Documents\develop\node\openphysicsnotes-content\css
+#  - opn/js: C:\Users\lucac\Documents\develop\node\openphysicsnotes-content\js
 templates:
   models:
     article: doc_src/templates/pages/article.html
+compilationOptions:
+  standard: c++20
+  includeDirs:
+    - out\build\x64-Debug\_cmrc\include
+    - out\build\x64-Debug\_deps\efsw-src\include
+    - C:\Program Files\LLVM\include
+    - out\build\x64-Debug\_deps\json-src\include
+    - C:\Users\lucac\Documents\develop\vs\libraries\LC_doc\out\build\x64-Debug\_deps\yaml-cpp-src\include
+    - out\build\x64-Debug\_deps\inja-src\include
+inputFiles:
+  - apps/lcdoc/main.cpp

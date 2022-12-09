@@ -37,7 +37,7 @@ namespace lcdoc
 				options.standard = yaml["standard"].as<string>();
 
 			// additional include dirs
-			if (nonEmptyString(yaml["includeDirs"]))
+			if (isSequence(yaml["includeDirs"]))
 				for (const auto& dir : yaml["includeDirs"])
 					if (nonEmptyString(dir))
 						options.additionalIncludeDirs.insert(dir.as<string>());
