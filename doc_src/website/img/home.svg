@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+
+    <!-- a simple stylized home -->
+    <path stroke="gray" stroke-width="10" fill="none" d="
+    M 100 10
+    L 10 100
+    L 40 100
+    L 40 190
+    L 90 190
+    L 90 130
+    L 130 130
+    L 130 190
+    L 160 190
+    L 160 100
+    L 190 100
+    L 150 60
+    L 150 20
+    L 135 20
+    L 135 45
+    L 100 10
+    " />
+    
+</svg>

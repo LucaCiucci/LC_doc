@@ -9,6 +9,8 @@
 
 #include <cmrc/cmrc.hpp>
 
+#include <argparse/argparse.hpp>
+
 #include "clang_interface/TranslationUnit.hpp"
 
 #include "html_page.hpp"
@@ -19,9 +21,13 @@
 #include "Project.hpp"
 #include "parse_project.hpp"
 
+#include "UpdateListener.hpp"
+
 CMRC_DECLARE(lcdoc);
 
 using std::make_shared;
+
+void prepareConsole(void);
 
 void printHelp(void)
 {
@@ -29,77 +35,60 @@ void printHelp(void)
 	std::cout << "TODO: help" << std::endl;
 }
 
-int main(int argc, char** argv)
+struct getWorkingPath_result
+{
+	using path = std::filesystem::path;
+	path workingDir;
+	path projectFile;
+};
+getWorkingPath_result getWorkingPath(const std::filesystem::path& _path);
+
+int main(int argc, const char* argv[])
 {
 	using namespace lcdoc::clang;
 	using namespace lcdoc;
 	using std::vector;
 	using std::exception;
 	using std::filesystem::path;
-
-	std::cout << colorize("Hello There!", { 0, 255, 0 }) << std::endl;
-
-	for (int i = 0; i < argc; ++i)
-		std::cout << colorize("argv", { 150, 150, 150 }) << "[" << colorize(std::to_string(i), { 181, 206, 168 }) << "]: " << colorize(argv[i], {214, 157, 122}) << std::endl;
 	
+	prepareConsole();
 
-	// check if help is required
-	const bool help = [&]() -> bool {
-		for (int i = 0; i < argc; ++i)
-			if (string(argv[i]).starts_with("-h") || string(argv[i]).starts_with("--h"))
-				return true;
-		return false;
-	}();
+	argparse::ArgumentParser program("lcdoc", "0.0.0");
 
-	if (help)
+	program.add_description("LC documentation generator");
+	program.add_epilog("TODO ...");
+
+	program
+		.add_argument("path")
+		.help("the folder containing a lcdoc.yaml project or a specific .yaml project file")
+		.default_value(string("."));
+
+	program
+		.add_argument("-w", "--watch")
+		.help("watch for changes")
+		.default_value(false)
+		.implicit_value(true);
+
+	try
 	{
-		printHelp();
-		return 0;
+		program.parse_args(argc, argv);
+	}
+	catch (const std::runtime_error& err)
+	{
+		std::cerr << err.what() << std::endl;
+		std::cerr << program;
+		return EXIT_FAILURE;
 	}
 
-	// get the first argument
-	const string arg = [&]() -> string {
-		if (argc <= 1)
-			return "";
-		return argv[1];
-	}();
-
 	// get the working directory and the project file
-	const auto& [workingDir, projectFile] = [&]() -> std::pair<path, path> {
-		try {
-			const path inputPath = std::filesystem::absolute(arg.empty() ? "." : arg);
+	const auto& [workingDir, projectFile] = getWorkingPath(program.get<string>("path"));
 
-			if (!std::filesystem::exists(inputPath))
-				throw std::runtime_error("input path does not exists");
+	//std::cout << "working dir:  " << workingDir << std::endl;
+	//std::cout << "project file: " << projectFile << std::endl;
 
-			if (std::filesystem::is_regular_file(inputPath))
-			{
-				return { inputPath.parent_path(), inputPath };
-			}
-			else if (std::filesystem::is_directory(inputPath))
-			{
-				const path inputFile = inputPath / "lcdoc.yaml";
-				if (!std::filesystem::is_regular_file(inputFile))
-					throw std::runtime_error("could not find lcdoc.yaml");
-				return { inputPath, inputFile };
-			}
-			else
-				throw std::runtime_error("input path is not a file nor a directory");
-		}
-		catch (const std::exception& e)
-		{
-			std::cerr << "Failed to get working dir and project file: " << e.what() << std::endl;
-			exit(0); // !!!
-		}
-		return {};
-	}();
-
-	std::cout << "working dir:  " << workingDir << std::endl;
-	std::cout << "project file: " << projectFile << std::endl;
-
+	// create the main project
 	auto project = std::make_shared<CXXProject>();
 	project->rootDir = workingDir;
-	//project->models["article"] = R"(C:\Users\lucac\Documents\develop\vs\libraries\LC_doc\example_project\doc_src\templates\pages\article.html)";
 
 	try
 	{
@@ -117,23 +106,66 @@ int main(int argc, char** argv)
 
 	generator.generate();
 
-	return 0;
+	if (program["--watch"] == true)
+	{
+		efsw::FileWatcher fileWatcher;
 
-	project->inputFilesOptions.standard = "c++20";
-	project->inputFilesOptions.additionalIncludeDirs.insert(R"(C:\Program Files\LLVM\include)");
-	project->inputFiles.push_back(CXXInputSourceFile{ .path = "C:/Users/lucac/Documents/develop/vs/libraries/LC_doc/apps/lcdoc/main.cpp" });
+		FuncitonalUpdateListener listener;
 
-	// !!!
+		listener.boldLstener = [&]() {
+			generator.generate();
+		};
+
+		const auto watchID = fileWatcher.addWatch(project->inputDir.string(), &listener, true);
+
+		fileWatcher.watch();
+
+		// loop forever
+		while (true)
+			std::this_thread::yield();
+	}
+
+	return EXIT_SUCCESS;
+}
+
+void prepareConsole(void)
+{
+#ifdef WIN32
+	// TODO sposta su una libreria
+	// Allow usage of ANSI escape sequences on Windows 10
+	// and UTF-8 console output
+	std::system("chcp 65001 > NUL");
+#endif
+}
+
+getWorkingPath_result getWorkingPath(const std::filesystem::path& _path)
+{
+	using std::filesystem::path;
+
 	try {
-		std::filesystem::create_directory_symlink(R"amfedpsv(C:\Users\lucac\Documents\develop\node\openphysicsnotes-content)amfedpsv", std::filesystem::absolute("./out2/opn"));
+		const path inputPath = std::filesystem::absolute(_path);
+
+		if (!std::filesystem::exists(inputPath))
+			throw std::runtime_error("input path does not exists");
+
+		if (std::filesystem::is_regular_file(inputPath))
+		{
+			return { inputPath.parent_path(), inputPath };
+		}
+		else if (std::filesystem::is_directory(inputPath))
+		{
+			const path inputFile = inputPath / "lcdoc.yaml";
+			if (!std::filesystem::is_regular_file(inputFile))
+				throw std::runtime_error("could not find lcdoc.yaml");
+			return { inputPath, inputFile };
+		}
+		else
+			throw std::runtime_error("input path is not a file nor a directory");
 	}
-	catch (const std::exception& e) {
-		std::cerr << e.what() << std::endl;
+	catch (const std::exception& e)
+	{
+		std::cerr << "Failed to get working dir and project file: " << e.what() << std::endl;
+		exit(EXIT_FAILURE); // !!!
 	}
-
-	//write_list_page(outDir / "ciao.html", parser.registry);
-
-	//test();
-
-	return 0;
+	return {};
 }

@@ -1,0 +1,30 @@
+.line-number {
+    color: rgb(128, 128, 128);
+    width: 2em;
+    display: inline-block;
+    text-align: right;
+    margin-right: 0.5em;
+    padding-right: 0.25em;
+    user-select: none;
+    border-right: 1px solid gray;
+  }
+
+  pre .copy-button {
+    position: absolute;
+    right: 0.5em;
+    top: 0.5em;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 0.8em;
+    color: rgb(128, 128, 128);
+  }
+
+  pre .copy-button:hover {
+    color: white;
+  }
+
+  pre {
+    position: relative;
+  }
