@@ -9,9 +9,6 @@
 
 #include <cmrc/cmrc.hpp>
 
-// !!!
-#include <efsw/efsw.hpp>
-
 #include <argparse/argparse.hpp>
 
 #include "clang_interface/TranslationUnit.hpp"
@@ -24,32 +21,11 @@
 #include "Project.hpp"
 #include "parse_project.hpp"
 
+#include "UpdateListener.hpp"
+
 CMRC_DECLARE(lcdoc);
 
 using std::make_shared;
-
-// Inherits from the abstract listener class, and implements the the file action handler
-class FuncitonalUpdateListener final : public efsw::FileWatchListener {
-public:
-
-	using Listener = std::function<void(efsw::WatchID watchid, const std::string& dir,
-		const std::string& filename, efsw::Action action,
-		std::string oldFilename)>;
-
-	Listener listener;
-	std::function<void(void)> boldLstener;
-
-	void handleFileAction(efsw::WatchID watchid, const std::string& dir,
-		const std::string& filename, efsw::Action action,
-		std::string oldFilename) override {
-
-		if (this->listener)
-			this->listener(watchid, dir, filename, action, oldFilename);
-
-		if (this->boldLstener)
-			this->boldLstener();
-	}
-};
 
 void prepareConsole(void);
 
@@ -58,6 +34,14 @@ void printHelp(void)
 	// TODO help
 	std::cout << "TODO: help" << std::endl;
 }
+
+struct getWorkingPath_result
+{
+	using path = std::filesystem::path;
+	path workingDir;
+	path projectFile;
+};
+getWorkingPath_result getWorkingPath(const std::filesystem::path& _path);
 
 int main(int argc, const char* argv[])
 {
@@ -97,37 +81,10 @@ int main(int argc, const char* argv[])
 	}
 
 	// get the working directory and the project file
-	const auto& [workingDir, projectFile] = [&]() -> std::pair<path, path> {
-		try {
-			const path inputPath = std::filesystem::absolute(program.get<string>("path"));
+	const auto& [workingDir, projectFile] = getWorkingPath(program.get<string>("path"));
 
-			if (!std::filesystem::exists(inputPath))
-				throw std::runtime_error("input path does not exists");
-
-			if (std::filesystem::is_regular_file(inputPath))
-			{
-				return { inputPath.parent_path(), inputPath };
-			}
-			else if (std::filesystem::is_directory(inputPath))
-			{
-				const path inputFile = inputPath / "lcdoc.yaml";
-				if (!std::filesystem::is_regular_file(inputFile))
-					throw std::runtime_error("could not find lcdoc.yaml");
-				return { inputPath, inputFile };
-			}
-			else
-				throw std::runtime_error("input path is not a file nor a directory");
-		}
-		catch (const std::exception& e)
-		{
-			std::cerr << "Failed to get working dir and project file: " << e.what() << std::endl;
-			exit(EXIT_FAILURE); // !!!
-		}
-		return {};
-	}();
-
-	std::cout << "working dir:  " << workingDir << std::endl;
-	std::cout << "project file: " << projectFile << std::endl;
+	//std::cout << "working dir:  " << workingDir << std::endl;
+	//std::cout << "project file: " << projectFile << std::endl;
 
 	// create the main project
 	auto project = std::make_shared<CXXProject>();
@@ -149,30 +106,24 @@ int main(int argc, const char* argv[])
 
 	generator.generate();
 
-	// !!!
+	if (program["--watch"] == true)
 	{
 		efsw::FileWatcher fileWatcher;
 
 		FuncitonalUpdateListener listener;
+
 		listener.boldLstener = [&]() {
 			generator.generate();
 		};
 
-		auto watchID = fileWatcher.addWatch(project->inputDir.string(), &listener, true);
+		const auto watchID = fileWatcher.addWatch(project->inputDir.string(), &listener, true);
 
 		fileWatcher.watch();
 
-		if (program["--watch"] == true)
-			// loop forever
-			while (true)
-				std::this_thread::yield();
+		// loop forever
+		while (true)
+			std::this_thread::yield();
 	}
-
-	return EXIT_SUCCESS;
-
-	project->inputFilesOptions.standard = "c++20";
-	project->inputFilesOptions.additionalIncludeDirs.insert(R"(C:\Program Files\LLVM\include)");
-	project->inputFiles.push_back(CXXInputSourceFile{ .path = "C:/Users/lucac/Documents/develop/vs/libraries/LC_doc/apps/lcdoc/main.cpp" });
 
 	return EXIT_SUCCESS;
 }
@@ -185,4 +136,36 @@ void prepareConsole(void)
 	// and UTF-8 console output
 	std::system("chcp 65001 > NUL");
 #endif
+}
+
+getWorkingPath_result getWorkingPath(const std::filesystem::path& _path)
+{
+	using std::filesystem::path;
+
+	try {
+		const path inputPath = std::filesystem::absolute(_path);
+
+		if (!std::filesystem::exists(inputPath))
+			throw std::runtime_error("input path does not exists");
+
+		if (std::filesystem::is_regular_file(inputPath))
+		{
+			return { inputPath.parent_path(), inputPath };
+		}
+		else if (std::filesystem::is_directory(inputPath))
+		{
+			const path inputFile = inputPath / "lcdoc.yaml";
+			if (!std::filesystem::is_regular_file(inputFile))
+				throw std::runtime_error("could not find lcdoc.yaml");
+			return { inputPath, inputFile };
+		}
+		else
+			throw std::runtime_error("input path is not a file nor a directory");
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "Failed to get working dir and project file: " << e.what() << std::endl;
+		exit(EXIT_FAILURE); // !!!
+	}
+	return {};
 }
